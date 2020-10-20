@@ -1,0 +1,5 @@
+spring:
+  profiles:
+    active: test
+  messages:
+    basename: i18n/validation,i18n/messages,i18n/exception
