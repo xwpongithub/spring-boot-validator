@@ -7,7 +7,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.constraints.NotEmpty;
+import java.util.List;
+
 @RestController
+@Validated
 public class BeanValidatorController {
 
     // http://localhost:8080/body
@@ -16,4 +20,9 @@ public class BeanValidatorController {
        return Response.ok();
     }
 
+    // http://localhost:8080/list
+    @PostMapping("list")
+    public Response list(@RequestBody @NotEmpty List<UserBO> list) {
+        return Response.ok();
+    }
 }

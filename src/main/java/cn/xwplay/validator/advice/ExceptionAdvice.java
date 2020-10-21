@@ -25,8 +25,22 @@ public class ExceptionAdvice {
     @Value("${spring.profiles.active}")
     private String env;
 
-    @ExceptionHandler({MissingRequestCookieException.class, MissingServletRequestParameterException.class, MissingRequestHeaderException.class})
-    public Response handleMissingServletRequestParameterException(Exception e) {
+    @ExceptionHandler({MissingRequestHeaderException.class})
+    public Response handleMissingRequestHeaderException(MissingRequestHeaderException e) {
+        printStackTrace(e);
+        String paramKey =StrUtil.subBetween(e.getMessage(),"'");
+        return Response.error("header中"+paramKey+"参数不存在");
+    }
+
+    @ExceptionHandler({MissingRequestCookieException.class})
+    public Response handleMissingRequestCookieException(MissingRequestCookieException e) {
+        printStackTrace(e);
+        String paramKey =StrUtil.subBetween(e.getMessage(),"'");
+        return Response.error("cookie中"+paramKey+"参数不存在");
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public Response handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
         printStackTrace(e);
         String paramKey =StrUtil.subBetween(e.getMessage(),"'");
         return Response.error(paramKey+"参数不存在");
@@ -58,12 +72,10 @@ public class ExceptionAdvice {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Response handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         BindingResult bindingResult = e.getBindingResult();
-        System.out.println(LocaleContextHolder.getLocale());
         for (ObjectError error : bindingResult.getAllErrors()) {
             for (Object argument : error.getArguments()) {
                 DefaultMessageSourceResolvable arg = (DefaultMessageSourceResolvable)argument;
                 String fieldName = arg.getCode();
-                System.out.println(fieldName);
                 return Response.error(400,error.getDefaultMessage());
             }
         }
